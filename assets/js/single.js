@@ -1,7 +1,18 @@
 var limitWarningEl = document.getElementById("limit-warning");
 var issueContainerEl= document.getElementById("issues-container");
+var repoNameEl=document.getElementById("repo-name");
+var getReopName = function(){
+var queryString = document.location.search;
+var repoName = queryString.split("=")[1];
+if(repoName){
+    repoNameEl.textContent= repoName;
+    getRepoIssues(repoName);
+}else{
+    document.location.replace("./index.html");
+}
+}
 var getRepoIssues = function(repo){
-    var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
+    var apiUrl = "https://api.github.com/repos/" + repo+ "/issues?direction=asc";
    fetch(apiUrl).then(function(response){
        //request was successful
        if (response.ok){
@@ -14,7 +25,7 @@ var getRepoIssues = function(repo){
            });
        }
        else{
-           alert("there was aproblem with your request!");
+           adocument.location.replace("./index.html");
        }
 var displayIssues = function(issues) {
     if (issues.length === 0){
@@ -64,7 +75,4 @@ var displayWarning =function(repo){
     //append to warning container 
     limitWarningEl.appendChild(linkEl);
 }
-
-getRepoIssues("facebook/react");
-getRepoIssues("expressjs/express");
-getRepoIssues('angular/angular');
+getReopName();
