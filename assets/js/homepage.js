@@ -1,22 +1,5 @@
-var getUserRepos = function(user){
-    //format the github api url 
-    var apiUrl ="https://api.github.com/users/" + user + "/repos";
-    //make a request to the url 
-    fetch(apiUrl).then(function(response){
-        if (response.ok){
-        response.json().then(function(data){
-            displayRepos(data,user)
-            console.log(data);
-        });
-    }else{
-        alert("Error GitHub user Not Found");
-    }
-    })
-    .catch(function(error){
-        alert("Unable to connect to GitHub");
-    });
-};
-getUserRepos();
+var languageButtonsEl = document.getElementById
+("language-buttons");
 var userFormEl = document.querySelector("#user-form");
 var nameInputEl = document.querySelector("#username");
 var repoContainerEl = document.querySelector("#repos-container");
@@ -33,7 +16,55 @@ var formSubmitHandler = function(event){
     }else{
         alert("please enter a GitHub username");
     }
-}
+};
+var buttonClickHandler =function(event){
+    //get the language attribute from the click element 
+    var language = event.target.getAttribute("data-language");
+    console.log("clicked",language);
+    if (language){
+        getFeatureRepos(language);
+        //clear old content 
+        repoContainerEl.textContent="";
+    }
+
+};
+var getUserRepos = function(user){
+    //format the github api url 
+    var apiUrl ="https://api.github.com/users/" + user + "/repos";
+    //make a request to the url 
+    fetch(apiUrl).then(function(response){
+        if (response.ok){
+        response.json().then(function(data){
+            console.log(data);
+            displayRepos(data,user)
+        });
+    }else{
+        alert("Error GitHub user Not Found");
+    }
+    })
+    .catch(function(error){
+        alert("Unable to connect to GitHub");
+    });
+};
+var getFeatureRepos =function(language) {
+    // format the github API url
+    var apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:featured&sort=help-wanted-issues";
+    // make a get request to url
+    fetch(apiUrl).then(function(response){
+        //request was successful
+        if (response.ok){
+            console.log(response)
+            response.json().then(function(data){
+                displayRepos(data.items, language);
+                console.log(data)
+            })
+        }else{
+            alert("ERROR: GitHub User Not Found");
+        }
+
+    });
+};
+
 var displayRepos = function(repos,searchTerm){
     console.log(repos);
     console.log(searchTerm);
@@ -74,4 +105,7 @@ var displayRepos = function(repos,searchTerm){
         repoContainerEl.appendChild(repoEl);
     }
 };
+
+
 userFormEl.addEventListener("submit", formSubmitHandler);
+languageButtonsEl.addEventListener("click", buttonClickHandler);
